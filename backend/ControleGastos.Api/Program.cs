@@ -1,13 +1,18 @@
 // Ponto de entrada da API de Controle de Gastos Residenciais.
 // A configuração é mantida enxuta aqui; as regras de negócio ficarão nos
 // controllers/serviços e o acesso a dados no DbContext (EF Core + SQLite).
+using System.Text.Json.Serialization;
 using ControleGastos.Api.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Registra os controllers (MVC/attribute routing) que exporão os endpoints REST.
-builder.Services.AddControllers();
+// O JsonStringEnumConverter faz o tipo da transação trafegar como texto
+// ("Despesa"/"Receita") em vez de número, deixando a API mais legível.
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 // Persistência com SQLite via EF Core. A connection string vem do appsettings.json,
 // garantindo que os dados sobrevivam ao fechamento da aplicação (arquivo .db em disco).
