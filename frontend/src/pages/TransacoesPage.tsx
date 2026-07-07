@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { pessoasApi, transacoesApi } from '../api'
 import { formatarMoeda } from '../format'
+import { ui } from '../ui'
 import type { Pessoa, TipoTransacao, Transacao } from '../types'
 
 /**
@@ -68,34 +69,35 @@ export function TransacoesPage() {
   }
 
   return (
-    <section className="page">
-      <div className="page__head">
-        <h2 className="page__title">Transações</h2>
-        <p className="page__sub">
+    <section className={ui.page}>
+      <div>
+        <h2 className={ui.pageTitle}>Transações</h2>
+        <p className={ui.pageSub}>
           Lançamentos de receitas e despesas. Menores de 18 anos só podem
           registrar despesas.
         </p>
       </div>
 
-      <div className="card">
-        <p className="card__label">Novo lançamento</p>
+      <div className={ui.card}>
+        <p className={ui.cardLabel}>Novo lançamento</p>
         {pessoas.length === 0 ? (
-          <p className="empty">Cadastre uma pessoa antes de lançar transações.</p>
+          <p className={ui.empty}>Cadastre uma pessoa antes de lançar transações.</p>
         ) : (
-          <form onSubmit={criarTransacao} className="form">
+          <form onSubmit={criarTransacao} className={ui.form}>
             <input
               type="text"
               placeholder="Descrição"
               aria-label="Descrição"
+              className={`${ui.field} min-w-0 flex-1`}
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
               required
             />
             <input
               type="number"
-              className="num"
               placeholder="Valor"
               aria-label="Valor"
+              className={`${ui.field} num flex-[0_1_120px]`}
               min="0.01"
               step="0.01"
               value={valor}
@@ -104,6 +106,7 @@ export function TransacoesPage() {
             />
             <select
               aria-label="Tipo"
+              className={ui.field}
               value={tipo}
               onChange={(e) => setTipo(e.target.value as TipoTransacao)}
             >
@@ -112,6 +115,7 @@ export function TransacoesPage() {
             </select>
             <select
               aria-label="Pessoa"
+              className={ui.field}
               value={pessoaId}
               onChange={(e) => setPessoaId(e.target.value)}
               required
@@ -123,52 +127,54 @@ export function TransacoesPage() {
                 </option>
               ))}
             </select>
-            <button type="submit" className="btn btn--primary">
+            <button type="submit" className={ui.btnPrimary}>
               Adicionar
             </button>
           </form>
         )}
       </div>
 
-      {erro && <p className="alert alert--error">{erro}</p>}
+      {erro && <p className={ui.alertError}>{erro}</p>}
 
-      <div className="card">
+      <div className={ui.card}>
         {carregando ? (
-          <p className="empty">Carregando...</p>
+          <p className={ui.empty}>Carregando...</p>
         ) : transacoes.length === 0 ? (
-          <p className="empty">Nenhuma transação cadastrada ainda.</p>
+          <p className={ui.empty}>Nenhuma transação cadastrada ainda.</p>
         ) : (
-          <div className="table-wrap">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Descrição</th>
-                <th>Pessoa</th>
-                <th>Tipo</th>
-                <th className="right">Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transacoes.map((transacao) => (
-                <tr key={transacao.id}>
-                  <td>{transacao.descricao}</td>
-                  <td>{nomeDaPessoa(transacao.pessoaId)}</td>
-                  <td>
-                    <span
-                      className={
-                        transacao.tipo === 'Receita'
-                          ? 'badge badge--receita'
-                          : 'badge badge--despesa'
-                      }
-                    >
-                      {transacao.tipo}
-                    </span>
-                  </td>
-                  <td className="right num">{formatarMoeda(transacao.valor)}</td>
+          <div className={ui.tableWrap}>
+            <table className={ui.table}>
+              <thead>
+                <tr>
+                  <th className={ui.th}>Descrição</th>
+                  <th className={ui.th}>Pessoa</th>
+                  <th className={ui.th}>Tipo</th>
+                  <th className={`${ui.th} text-right`}>Valor</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className={ui.tbody}>
+                {transacoes.map((transacao) => (
+                  <tr key={transacao.id} className={ui.tr}>
+                    <td className={ui.td}>{transacao.descricao}</td>
+                    <td className={ui.td}>{nomeDaPessoa(transacao.pessoaId)}</td>
+                    <td className={ui.td}>
+                      <span
+                        className={`${ui.badge} ${
+                          transacao.tipo === 'Receita'
+                            ? ui.badgeReceita
+                            : ui.badgeDespesa
+                        }`}
+                      >
+                        {transacao.tipo}
+                      </span>
+                    </td>
+                    <td className={`${ui.td} num text-right`}>
+                      {formatarMoeda(transacao.valor)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

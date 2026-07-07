@@ -1,33 +1,35 @@
+@import 'tailwindcss';
+
 /* ===========================================================================
-   Design tokens — "livro-caixa doméstico" (household ledger)
-   Papel quente + estrutura em petróleo profundo; verde/vermelho reservados
-   exclusivamente para a semântica financeira (receita/despesa).
+   Design tokens — "registro doméstico" (household ledger).
+   Expostos como tema do Tailwind: geram utilitários como bg-paper, text-brand,
+   border-line, font-mono, text-receita, rounded-card, shadow-card, etc.
    =========================================================================== */
-:root {
+@theme {
   /* Superfícies */
-  --paper: #f4f3ef;
-  --surface: #ffffff;
-  --surface-sunken: #faf9f6;
+  --color-paper: #f4f3ef;
+  --color-surface: #ffffff;
+  --color-sunken: #faf9f6;
 
   /* Tinta / texto */
-  --ink: #16292b;
-  --ink-2: #47585a;
-  --muted: #8a9698;
+  --color-ink: #16292b;
+  --color-ink-soft: #47585a;
+  --color-muted: #8a9698;
 
   /* Linhas */
-  --line: #e5e2da;
-  --line-strong: #cfccc2;
+  --color-line: #e5e2da;
+  --color-line-strong: #cfccc2;
 
   /* Marca (petróleo) */
-  --brand: #0e5c57;
-  --brand-ink: #0a403c;
-  --brand-tint: #e6efed;
+  --color-brand: #0e5c57;
+  --color-brand-ink: #0a403c;
+  --color-brand-tint: #e6efed;
 
   /* Semântica financeira */
-  --receita: #1f7a4d;
-  --receita-tint: #e7f2ea;
-  --despesa: #bc4b3c;
-  --despesa-tint: #f7eae7;
+  --color-receita: #1f7a4d;
+  --color-receita-tint: #e7f2ea;
+  --color-despesa: #bc4b3c;
+  --color-despesa-tint: #f7eae7;
 
   /* Tipografia */
   --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
@@ -35,60 +37,55 @@
   --font-mono: 'JetBrains Mono', ui-monospace, 'Consolas', monospace;
 
   /* Raios e sombras */
-  --radius: 10px;
-  --radius-sm: 7px;
-  --shadow-card: 0 1px 2px rgba(22, 41, 43, 0.04), 0 8px 24px rgba(22, 41, 43, 0.05);
+  --radius-card: 10px;
+  --radius-field: 7px;
+  --shadow-card: 0 1px 2px rgb(22 41 43 / 0.04), 0 8px 24px rgb(22 41 43 / 0.05);
 
-  color-scheme: light;
+  /* Ponto de quebra "md" ajustado para 720px: acima disso a barra lateral fica
+     na vertical (com recolher); abaixo, vira um topo horizontal. */
+  --breakpoint-md: 45rem;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-}
-
-body {
-  font-family: var(--font-sans);
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--ink);
-  background: var(--paper);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-h1,
-h2,
-h3 {
-  font-family: var(--font-display);
-  font-weight: 500;
-  color: var(--ink);
-  margin: 0;
-  letter-spacing: -0.01em;
-}
-
-/* Números monetários: fonte mono com algarismos tabulares para alinhar colunas
-   como em um livro-caixa impresso. Este é o elemento-assinatura da interface. */
-.num {
+/* Números monetários: fonte mono com algarismos tabulares, para alinhar as
+   colunas como em um registro impresso. É o elemento-assinatura da UI. */
+@utility num {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1;
   letter-spacing: -0.02em;
   white-space: nowrap;
 }
 
-/* Acessibilidade: foco de teclado sempre visível. */
-:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
+@layer base {
+  body {
+    margin: 0;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
   }

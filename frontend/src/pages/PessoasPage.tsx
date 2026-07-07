@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { pessoasApi } from '../api'
+import { ui } from '../ui'
 import type { Pessoa } from '../types'
 
 /**
@@ -60,78 +61,79 @@ export function PessoasPage() {
   }
 
   return (
-    <section className="page">
-      <div className="page__head">
-        <h2 className="page__title">Pessoas</h2>
-        <p className="page__sub">
+    <section className={ui.page}>
+      <div>
+        <h2 className={ui.pageTitle}>Pessoas</h2>
+        <p className={ui.pageSub}>
           Quem faz parte da casa. Ao remover alguém, as transações dessa pessoa
           também são apagadas.
         </p>
       </div>
 
-      <div className="card">
-        <p className="card__label">Nova pessoa</p>
-        <form onSubmit={criarPessoa} className="form">
+      <div className={ui.card}>
+        <p className={ui.cardLabel}>Nova pessoa</p>
+        <form onSubmit={criarPessoa} className={ui.form}>
           <input
             type="text"
             placeholder="Nome"
             aria-label="Nome"
+            className={`${ui.field} min-w-0 flex-1`}
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             required
           />
           <input
             type="number"
-            className="num"
             placeholder="Idade"
             aria-label="Idade"
+            className={`${ui.field} num flex-[0_1_120px]`}
             min={0}
             max={130}
             value={idade}
             onChange={(e) => setIdade(e.target.value)}
             required
           />
-          <button type="submit" className="btn btn--primary">
+          <button type="submit" className={ui.btnPrimary}>
             Adicionar
           </button>
         </form>
       </div>
 
-      {erro && <p className="alert alert--error">{erro}</p>}
+      {erro && <p className={ui.alertError}>{erro}</p>}
 
-      <div className="card">
+      <div className={ui.card}>
         {carregando ? (
-          <p className="empty">Carregando...</p>
+          <p className={ui.empty}>Carregando...</p>
         ) : pessoas.length === 0 ? (
-          <p className="empty">Nenhuma pessoa cadastrada ainda.</p>
+          <p className={ui.empty}>Nenhuma pessoa cadastrada ainda.</p>
         ) : (
-          <div className="table-wrap">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th className="right">Idade</th>
-                <th className="col-acao" aria-label="Ações"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {pessoas.map((pessoa) => (
-                <tr key={pessoa.id}>
-                  <td>{pessoa.nome}</td>
-                  <td className="right num">{pessoa.idade}</td>
-                  <td className="col-acao">
-                    <button
-                      type="button"
-                      className="btn btn--ghost"
-                      onClick={() => excluirPessoa(pessoa.id, pessoa.nome)}
-                    >
-                      Excluir
-                    </button>
-                  </td>
+          <div className={ui.tableWrap}>
+            <table className={ui.table}>
+              <thead>
+                <tr>
+                  <th className={ui.th}>Nome</th>
+                  <th className={`${ui.th} text-right`}>Idade</th>
+                  <th className={ui.th} aria-label="Ações" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className={ui.tbody}>
+                {pessoas.map((pessoa) => (
+                  <tr key={pessoa.id} className={ui.tr}>
+                    <td className={ui.td}>{pessoa.nome}</td>
+                    <td className={`${ui.td} num text-right`}>{pessoa.idade}</td>
+                    <td className={ui.tdAcao}>
+                      <button
+                        type="button"
+                        className={ui.btnGhost}
+                        onClick={() => excluirPessoa(pessoa.id, pessoa.nome)}
+                      >
+                        Excluir
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
