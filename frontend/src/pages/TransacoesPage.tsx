@@ -134,7 +134,11 @@ export function TransacoesPage() {
         )}
       </div>
 
-      {erro && <p className={ui.alertError}>{erro}</p>}
+      {erro && (
+        <p className={ui.alertError} role="alert">
+          {erro}
+        </p>
+      )}
 
       <div className={ui.card}>
         {carregando ? (
