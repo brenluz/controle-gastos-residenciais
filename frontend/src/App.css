@@ -89,3 +89,17 @@ td {
   color: #dc2626;
   margin-bottom: 1rem;
 }
+
+/* Consulta de totais */
+.linha-total td {
+  font-weight: 600;
+  border-top: 2px solid #9ca3af;
+}
+
+.saldo-positivo {
+  color: #16a34a;
+}
+
+.saldo-negativo {
+  color: #dc2626;
+}
