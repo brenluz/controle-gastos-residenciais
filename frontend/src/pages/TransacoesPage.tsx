@@ -18,6 +18,7 @@ export function TransacoesPage() {
   const [pessoaId, setPessoaId] = useState('')
   const [erro, setErro] = useState<string | null>(null)
   const [carregando, setCarregando] = useState(false)
+  const [enviando, setEnviando] = useState(false)
 
   // Carrega transações e pessoas (necessárias para o seletor) ao montar.
   useEffect(() => {
@@ -43,7 +44,9 @@ export function TransacoesPage() {
 
   async function criarTransacao(evento: React.FormEvent) {
     evento.preventDefault()
+    if (enviando) return
     setErro(null)
+    setEnviando(true)
     try {
       await transacoesApi.criar({
         descricao: descricao.trim(),
@@ -60,6 +63,8 @@ export function TransacoesPage() {
     } catch (e) {
       // Ex.: "Pessoas menores de 18 anos só podem cadastrar despesas."
       setErro((e as Error).message)
+    } finally {
+      setEnviando(false)
     }
   }
 
@@ -122,8 +127,8 @@ export function TransacoesPage() {
                 </option>
               ))}
             </select>
-            <button type="submit" className={ui.btnPrimary}>
-              Adicionar
+            <button type="submit" className={ui.btnPrimary} disabled={enviando}>
+              {enviando ? 'Adicionando...' : 'Adicionar'}
             </button>
           </form>
         )}

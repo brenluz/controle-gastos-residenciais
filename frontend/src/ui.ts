@@ -17,7 +17,7 @@ export const ui = {
 
   // Botões
   btnPrimary:
-    'cursor-pointer rounded-field bg-brand px-[18px] py-2.5 text-[0.92rem] font-semibold text-white transition-colors hover:bg-brand-ink',
+    'cursor-pointer rounded-field bg-brand px-[18px] py-2.5 text-[0.92rem] font-semibold text-white transition-colors hover:bg-brand-ink disabled:cursor-not-allowed disabled:opacity-60',
   btnGhost:
     'cursor-pointer rounded-field bg-transparent px-2.5 py-1.5 text-[0.85rem] font-semibold text-despesa transition-colors hover:bg-despesa-tint',
 

@@ -13,6 +13,7 @@ export function PessoasPage() {
   const [idade, setIdade] = useState('')
   const [erro, setErro] = useState<string | null>(null)
   const [carregando, setCarregando] = useState(false)
+  const [enviando, setEnviando] = useState(false)
 
   // Carrega a lista de pessoas ao montar o componente.
   useEffect(() => {
@@ -33,7 +34,9 @@ export function PessoasPage() {
 
   async function criarPessoa(evento: React.FormEvent) {
     evento.preventDefault()
+    if (enviando) return
     setErro(null)
+    setEnviando(true)
     try {
       await pessoasApi.criar({ nome: nome.trim(), idade: Number(idade) })
       // Limpa o formulário e recarrega a lista.
@@ -42,6 +45,8 @@ export function PessoasPage() {
       await carregarPessoas()
     } catch (e) {
       setErro((e as Error).message)
+    } finally {
+      setEnviando(false)
     }
   }
 
@@ -93,8 +98,8 @@ export function PessoasPage() {
             onChange={(e) => setIdade(e.target.value)}
             required
           />
-          <button type="submit" className={ui.btnPrimary}>
-            Adicionar
+          <button type="submit" className={ui.btnPrimary} disabled={enviando}>
+            {enviando ? 'Adicionando...' : 'Adicionar'}
           </button>
         </form>
       </div>
