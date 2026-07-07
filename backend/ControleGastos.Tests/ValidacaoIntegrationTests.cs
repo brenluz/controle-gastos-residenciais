@@ -2,7 +2,9 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ControleGastos.Api.Data;
 using ControleGastos.Api.DTOs;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ControleGastos.Tests;
 
@@ -23,8 +25,19 @@ public class ValidacaoIntegrationTests : IClassFixture<ApiWebApplicationFactory>
 
     private readonly HttpClient _client;
 
-    public ValidacaoIntegrationTests(ApiWebApplicationFactory factory) =>
+    public ValidacaoIntegrationTests(ApiWebApplicationFactory factory)
+    {
         _client = factory.CreateClient();
+
+        // O host (TestServer) é reaproveitado via IClassFixture, mas o construtor
+        // roda a cada teste: zeramos os dados aqui para que um teste não enxergue
+        // o que outro criou (isolamento equivalente ao dos testes de unidade).
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Transacoes.RemoveRange(db.Transacoes.ToList());
+        db.Pessoas.RemoveRange(db.Pessoas.ToList());
+        db.SaveChanges();
+    }
 
     [Fact]
     public async Task PostPessoa_SemNome_DeveRetornar400()
