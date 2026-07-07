@@ -3,6 +3,7 @@
 // controllers/serviços e o acesso a dados no DbContext (EF Core + SQLite).
 using System.Text.Json.Serialization;
 using ControleGastos.Api.Data;
+using ControleGastos.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +33,12 @@ builder.Services.AddControllers()
 // garantindo que os dados sobrevivam ao fechamento da aplicação (arquivo .db em disco).
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Serviços de domínio: concentram as regras de negócio e o acesso a dados,
+// deixando os controllers responsáveis apenas pela camada HTTP.
+builder.Services.AddScoped<IPessoaService, PessoaService>();
+builder.Services.AddScoped<ITransacaoService, TransacaoService>();
+builder.Services.AddScoped<ITotaisService, TotaisService>();
 
 // Swagger/OpenAPI para documentar e testar a API durante o desenvolvimento.
 builder.Services.AddEndpointsApiExplorer();

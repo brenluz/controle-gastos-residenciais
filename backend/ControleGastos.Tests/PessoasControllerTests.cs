@@ -1,6 +1,7 @@
 using ControleGastos.Api.Controllers;
 using ControleGastos.Api.DTOs;
 using ControleGastos.Api.Models;
+using ControleGastos.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -18,7 +19,7 @@ public class PessoasControllerTests
     {
         using var factory = new TestDbContextFactory();
         using var contexto = factory.CriarContexto();
-        var controller = new PessoasController(contexto);
+        var controller = new PessoasController(new PessoaService(contexto));
 
         var resultado = await controller.Criar(new CriarPessoaRequest { Nome = "João", Idade = 30 });
 
@@ -46,7 +47,7 @@ public class PessoasControllerTests
         }
 
         using var contexto = factory.CriarContexto();
-        var resultado = await new PessoasController(contexto).Listar();
+        var resultado = await new PessoasController(new PessoaService(contexto)).Listar();
 
         var ok = Assert.IsType<OkObjectResult>(resultado.Result);
         var pessoas = Assert.IsAssignableFrom<IEnumerable<PessoaResponse>>(ok.Value).ToList();
@@ -74,7 +75,7 @@ public class PessoasControllerTests
 
         using (var contexto = factory.CriarContexto())
         {
-            var resultado = await new PessoasController(contexto).Excluir(pessoaId);
+            var resultado = await new PessoasController(new PessoaService(contexto)).Excluir(pessoaId);
             Assert.IsType<NoContentResult>(resultado);
         }
 
@@ -90,7 +91,7 @@ public class PessoasControllerTests
         using var factory = new TestDbContextFactory();
         using var contexto = factory.CriarContexto();
 
-        var resultado = await new PessoasController(contexto).Excluir(Guid.NewGuid());
+        var resultado = await new PessoasController(new PessoaService(contexto)).Excluir(Guid.NewGuid());
 
         Assert.IsType<NotFoundObjectResult>(resultado);
     }

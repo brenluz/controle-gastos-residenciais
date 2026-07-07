@@ -1,37 +1,26 @@
-using ControleGastos.Api.Data;
 using ControleGastos.Api.DTOs;
-using ControleGastos.Api.Models;
+using ControleGastos.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ControleGastos.Api.Controllers;
 
 /// <summary>
 /// Endpoints de gerenciamento de transações: criação e listagem.
+/// As regras de negócio ficam no <see cref="ITransacaoService"/>.
 /// (Edição e exclusão não são requisitos deste cadastro.)
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class TransacoesController : ControllerBase
 {
-    /// <summary>Idade mínima (em anos) para ser considerado maior de idade.</summary>
-    private const int IdadeMaioridade = 18;
+    private readonly ITransacaoService _transacoes;
 
-    private readonly AppDbContext _db;
-
-    public TransacoesController(AppDbContext db) => _db = db;
+    public TransacoesController(ITransacaoService transacoes) => _transacoes = transacoes;
 
     /// <summary>Lista todas as transações cadastradas.</summary>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TransacaoResponse>>> Listar()
-    {
-        var transacoes = await _db.Transacoes
-            .AsNoTracking()
-            .Select(t => TransacaoResponse.FromEntity(t))
-            .ToListAsync();
-
-        return Ok(transacoes);
-    }
+    public async Task<ActionResult<IEnumerable<TransacaoResponse>>> Listar() =>
+        Ok(await _transacoes.ListarAsync());
 
     /// <summary>
     /// Cadastra uma nova transação, aplicando as regras de negócio:
@@ -43,35 +32,10 @@ public class TransacoesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<TransacaoResponse>> Criar(CriarTransacaoRequest request)
     {
-        // A verificação das regras (pessoa existe / idade) e a gravação são feitas
-        // dentro de uma transação explícita de banco, formando uma única unidade
-        // atômica: ou tudo é confirmado, ou nada é gravado (rollback). Se qualquer
-        // regra falhar, o "await using" descarta a transação sem commit.
-        await using var transacaoBd = await _db.Database.BeginTransactionAsync();
+        var resultado = await _transacoes.CriarAsync(request);
+        if (!resultado.Sucesso)
+            return BadRequest(new { mensagem = resultado.Erro });
 
-        // Regra: a pessoa precisa existir no cadastro.
-        var pessoa = await _db.Pessoas.FindAsync(request.PessoaId);
-        if (pessoa is null)
-            return BadRequest(new { mensagem = "Pessoa não encontrada para a transação informada." });
-
-        // Regra: menores de idade só podem cadastrar despesas.
-        if (pessoa.Idade < IdadeMaioridade && request.Tipo == TipoTransacao.Receita)
-            return BadRequest(new { mensagem = "Pessoas menores de 18 anos só podem cadastrar despesas." });
-
-        var transacao = new Transacao
-        {
-            Id = Guid.NewGuid(),
-            Descricao = request.Descricao,
-            Valor = request.Valor,
-            // O tipo é obrigatório e validado pelo DTO; aqui já temos um valor garantido.
-            Tipo = request.Tipo!.Value,
-            PessoaId = request.PessoaId
-        };
-
-        _db.Transacoes.Add(transacao);
-        await _db.SaveChangesAsync();
-        await transacaoBd.CommitAsync();
-
-        return CreatedAtAction(nameof(Listar), new { id = transacao.Id }, TransacaoResponse.FromEntity(transacao));
+        return CreatedAtAction(nameof(Listar), new { id = resultado.Valor!.Id }, resultado.Valor);
     }
 }

@@ -1,6 +1,7 @@
 using ControleGastos.Api.Controllers;
 using ControleGastos.Api.DTOs;
 using ControleGastos.Api.Models;
+using ControleGastos.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
@@ -35,7 +36,7 @@ public class TotaisControllerTests
         }
 
         using var contexto = factory.CriarContexto();
-        var resultado = await new TotaisController(contexto).Consultar();
+        var resultado = await new TotaisController(new TotaisService(contexto)).Consultar();
 
         var ok = Assert.IsType<OkObjectResult>(resultado.Result);
         var totais = Assert.IsType<TotaisResponse>(ok.Value);
@@ -67,7 +68,7 @@ public class TotaisControllerTests
         }
 
         using var contexto = factory.CriarContexto();
-        var resultado = await new TotaisController(contexto).Consultar();
+        var resultado = await new TotaisController(new TotaisService(contexto)).Consultar();
 
         var ok = Assert.IsType<OkObjectResult>(resultado.Result);
         var totais = Assert.IsType<TotaisResponse>(ok.Value);

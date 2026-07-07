@@ -1,6 +1,7 @@
 using ControleGastos.Api.Controllers;
 using ControleGastos.Api.DTOs;
 using ControleGastos.Api.Models;
+using ControleGastos.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -30,7 +31,7 @@ public class TransacoesControllerTests
         var adultoId = await SemearPessoaAsync(factory, idade: 30);
 
         using var contexto = factory.CriarContexto();
-        var resultado = await new TransacoesController(contexto).Criar(new CriarTransacaoRequest
+        var resultado = await new TransacoesController(new TransacaoService(contexto)).Criar(new CriarTransacaoRequest
         {
             Descricao = "Salário",
             Valor = 5000m,
@@ -51,7 +52,7 @@ public class TransacoesControllerTests
         var menorId = await SemearPessoaAsync(factory, idade: 16);
 
         using var contexto = factory.CriarContexto();
-        var resultado = await new TransacoesController(contexto).Criar(new CriarTransacaoRequest
+        var resultado = await new TransacoesController(new TransacaoService(contexto)).Criar(new CriarTransacaoRequest
         {
             Descricao = "Mesada",
             Valor = 100m,
@@ -73,7 +74,7 @@ public class TransacoesControllerTests
         var menorId = await SemearPessoaAsync(factory, idade: 16);
 
         using var contexto = factory.CriarContexto();
-        var resultado = await new TransacoesController(contexto).Criar(new CriarTransacaoRequest
+        var resultado = await new TransacoesController(new TransacaoService(contexto)).Criar(new CriarTransacaoRequest
         {
             Descricao = "Lanche",
             Valor = 20m,
@@ -91,7 +92,7 @@ public class TransacoesControllerTests
         using var factory = new TestDbContextFactory();
         using var contexto = factory.CriarContexto();
 
-        var resultado = await new TransacoesController(contexto).Criar(new CriarTransacaoRequest
+        var resultado = await new TransacoesController(new TransacaoService(contexto)).Criar(new CriarTransacaoRequest
         {
             Descricao = "Qualquer",
             Valor = 10m,
