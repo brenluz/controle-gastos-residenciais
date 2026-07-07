@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using ControleGastos.Api.Models;
+using ControleGastos.Api.Validation;
 
 namespace ControleGastos.Api.DTOs;
 
@@ -10,6 +11,7 @@ namespace ControleGastos.Api.DTOs;
 public class CriarTransacaoRequest
 {
     [Required(ErrorMessage = "A descrição é obrigatória.")]
+    [NotWhitespace(ErrorMessage = "A descrição não pode ser vazia.")]
     [MaxLength(250, ErrorMessage = "A descrição deve ter no máximo 250 caracteres.")]
     public string Descricao { get; set; } = string.Empty;
 
@@ -21,6 +23,8 @@ public class CriarTransacaoRequest
     [Required(ErrorMessage = "O tipo (Despesa/Receita) é obrigatório.")]
     public TipoTransacao? Tipo { get; set; }
 
-    [Required(ErrorMessage = "A pessoa é obrigatória.")]
+    // [Required] não serve para Guid (tipo de valor): um corpo sem o campo chega
+    // como Guid.Empty e passaria. [NotEmptyGuid] garante que a pessoa foi informada.
+    [NotEmptyGuid(ErrorMessage = "A pessoa é obrigatória.")]
     public Guid PessoaId { get; set; }
 }

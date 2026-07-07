@@ -33,7 +33,7 @@ public class PessoaService : IPessoaService
         var pessoa = new Pessoa
         {
             Id = Guid.NewGuid(),
-            Nome = request.Nome,
+            Nome = request.Nome.Trim(),
             Idade = request.Idade
         };
 

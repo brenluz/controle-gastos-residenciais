@@ -50,7 +50,7 @@ public class TransacaoService : ITransacaoService
         var transacao = new Transacao
         {
             Id = Guid.NewGuid(),
-            Descricao = request.Descricao,
+            Descricao = request.Descricao.Trim(),
             Valor = request.Valor,
             // O tipo é obrigatório e validado pelo DTO; aqui já temos um valor garantido.
             Tipo = request.Tipo!.Value,

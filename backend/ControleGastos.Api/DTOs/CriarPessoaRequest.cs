@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using ControleGastos.Api.Validation;
 
 namespace ControleGastos.Api.DTOs;
 
@@ -10,6 +11,7 @@ namespace ControleGastos.Api.DTOs;
 public class CriarPessoaRequest
 {
     [Required(ErrorMessage = "O nome é obrigatório.")]
+    [NotWhitespace(ErrorMessage = "O nome não pode ser vazio.")]
     [MaxLength(150, ErrorMessage = "O nome deve ter no máximo 150 caracteres.")]
     public string Nome { get; set; } = string.Empty;
 
