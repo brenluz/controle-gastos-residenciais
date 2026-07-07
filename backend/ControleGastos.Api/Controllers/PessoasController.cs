@@ -43,8 +43,11 @@ public class PessoasController : ControllerBase
             Idade = request.Idade
         };
 
+        // Gravação dentro de uma transação explícita de banco.
+        await using var transacaoBd = await _db.Database.BeginTransactionAsync();
         _db.Pessoas.Add(pessoa);
         await _db.SaveChangesAsync();
+        await transacaoBd.CommitAsync();
 
         // 201 Created com o cabeçalho Location apontando para a listagem.
         return CreatedAtAction(nameof(Listar), new { id = pessoa.Id }, PessoaResponse.FromEntity(pessoa));
@@ -61,8 +64,12 @@ public class PessoasController : ControllerBase
         if (pessoa is null)
             return NotFound(new { mensagem = "Pessoa não encontrada." });
 
+        // Exclusão dentro de uma transação explícita: a remoção da pessoa e das
+        // suas transações (cascata) é confirmada como uma única unidade atômica.
+        await using var transacaoBd = await _db.Database.BeginTransactionAsync();
         _db.Pessoas.Remove(pessoa);
         await _db.SaveChangesAsync();
+        await transacaoBd.CommitAsync();
 
         return NoContent();
     }

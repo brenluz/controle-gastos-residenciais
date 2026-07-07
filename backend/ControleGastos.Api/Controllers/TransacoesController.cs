@@ -43,6 +43,12 @@ public class TransacoesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<TransacaoResponse>> Criar(CriarTransacaoRequest request)
     {
+        // A verificação das regras (pessoa existe / idade) e a gravação são feitas
+        // dentro de uma transação explícita de banco, formando uma única unidade
+        // atômica: ou tudo é confirmado, ou nada é gravado (rollback). Se qualquer
+        // regra falhar, o "await using" descarta a transação sem commit.
+        await using var transacaoBd = await _db.Database.BeginTransactionAsync();
+
         // Regra: a pessoa precisa existir no cadastro.
         var pessoa = await _db.Pessoas.FindAsync(request.PessoaId);
         if (pessoa is null)
@@ -64,6 +70,7 @@ public class TransacoesController : ControllerBase
 
         _db.Transacoes.Add(transacao);
         await _db.SaveChangesAsync();
+        await transacaoBd.CommitAsync();
 
         return CreatedAtAction(nameof(Listar), new { id = transacao.Id }, TransacaoResponse.FromEntity(transacao));
     }
