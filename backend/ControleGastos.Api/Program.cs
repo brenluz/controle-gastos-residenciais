@@ -76,3 +76,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Torna a classe Program acessível aos testes de integração (WebApplicationFactory<Program>).
+public partial class Program { }
