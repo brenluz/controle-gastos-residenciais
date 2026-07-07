@@ -1,23 +1,95 @@
+/* ===========================================================================
+   Design tokens — "livro-caixa doméstico" (household ledger)
+   Papel quente + estrutura em petróleo profundo; verde/vermelho reservados
+   exclusivamente para a semântica financeira (receita/despesa).
+   =========================================================================== */
 :root {
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  /* Superfícies */
+  --paper: #f4f3ef;
+  --surface: #ffffff;
+  --surface-sunken: #faf9f6;
 
-  font-family: var(--sans);
-  font-size: 16px;
-  line-height: 1.5;
-  color: #1f2937;
-  background: #f9fafb;
+  /* Tinta / texto */
+  --ink: #16292b;
+  --ink-2: #47585a;
+  --muted: #8a9698;
+
+  /* Linhas */
+  --line: #e5e2da;
+  --line-strong: #cfccc2;
+
+  /* Marca (petróleo) */
+  --brand: #0e5c57;
+  --brand-ink: #0a403c;
+  --brand-tint: #e6efed;
+
+  /* Semântica financeira */
+  --receita: #1f7a4d;
+  --receita-tint: #e7f2ea;
+  --despesa: #bc4b3c;
+  --despesa-tint: #f7eae7;
+
+  /* Tipografia */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Instrument Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Consolas', monospace;
+
+  /* Raios e sombras */
+  --radius: 10px;
+  --radius-sm: 7px;
+  --shadow-card: 0 1px 2px rgba(22, 41, 43, 0.04), 0 8px 24px rgba(22, 41, 43, 0.05);
+
+  color-scheme: light;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
 }
 
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 h1,
-h2 {
-  color: #111827;
-  font-weight: 600;
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* Números monetários: fonte mono com algarismos tabulares para alinhar colunas
+   como em um livro-caixa impresso. Este é o elemento-assinatura da interface. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+/* Acessibilidade: foco de teclado sempre visível. */
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }

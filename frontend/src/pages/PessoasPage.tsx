@@ -60,63 +60,81 @@ export function PessoasPage() {
   }
 
   return (
-    <section>
-      <h2>Pessoas</h2>
+    <section className="page">
+      <div className="page__head">
+        <h2 className="page__title">Pessoas</h2>
+        <p className="page__sub">
+          Quem faz parte da casa. Ao remover alguém, as transações dessa pessoa
+          também são apagadas.
+        </p>
+      </div>
 
-      <form onSubmit={criarPessoa} className="form-linha">
-        <input
-          type="text"
-          placeholder="Nome"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="Idade"
-          min={0}
-          max={130}
-          value={idade}
-          onChange={(e) => setIdade(e.target.value)}
-          required
-        />
-        <button type="submit">Adicionar</button>
-      </form>
+      <div className="card">
+        <p className="card__label">Nova pessoa</p>
+        <form onSubmit={criarPessoa} className="form">
+          <input
+            type="text"
+            placeholder="Nome"
+            aria-label="Nome"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            required
+          />
+          <input
+            type="number"
+            className="num"
+            placeholder="Idade"
+            aria-label="Idade"
+            min={0}
+            max={130}
+            value={idade}
+            onChange={(e) => setIdade(e.target.value)}
+            required
+          />
+          <button type="submit" className="btn btn--primary">
+            Adicionar
+          </button>
+        </form>
+      </div>
 
-      {erro && <p className="erro">{erro}</p>}
+      {erro && <p className="alert alert--error">{erro}</p>}
 
-      {carregando ? (
-        <p>Carregando...</p>
-      ) : pessoas.length === 0 ? (
-        <p>Nenhuma pessoa cadastrada.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Idade</th>
-              <th aria-label="Ações"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {pessoas.map((pessoa) => (
-              <tr key={pessoa.id}>
-                <td>{pessoa.nome}</td>
-                <td>{pessoa.idade}</td>
-                <td>
-                  <button
-                    type="button"
-                    className="botao-perigo"
-                    onClick={() => excluirPessoa(pessoa.id, pessoa.nome)}
-                  >
-                    Excluir
-                  </button>
-                </td>
+      <div className="card">
+        {carregando ? (
+          <p className="empty">Carregando...</p>
+        ) : pessoas.length === 0 ? (
+          <p className="empty">Nenhuma pessoa cadastrada ainda.</p>
+        ) : (
+          <div className="table-wrap">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th className="right">Idade</th>
+                <th className="col-acao" aria-label="Ações"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {pessoas.map((pessoa) => (
+                <tr key={pessoa.id}>
+                  <td>{pessoa.nome}</td>
+                  <td className="right num">{pessoa.idade}</td>
+                  <td className="col-acao">
+                    <button
+                      type="button"
+                      className="btn btn--ghost"
+                      onClick={() => excluirPessoa(pessoa.id, pessoa.nome)}
+                    >
+                      Excluir
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          </div>
+        )}
+      </div>
     </section>
   )
 }

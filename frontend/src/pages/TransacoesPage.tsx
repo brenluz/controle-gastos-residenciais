@@ -68,73 +68,110 @@ export function TransacoesPage() {
   }
 
   return (
-    <section>
-      <h2>Transações</h2>
+    <section className="page">
+      <div className="page__head">
+        <h2 className="page__title">Transações</h2>
+        <p className="page__sub">
+          Lançamentos de receitas e despesas. Menores de 18 anos só podem
+          registrar despesas.
+        </p>
+      </div>
 
-      {pessoas.length === 0 ? (
-        <p>Cadastre uma pessoa antes de lançar transações.</p>
-      ) : (
-        <form onSubmit={criarTransacao} className="form-linha">
-          <input
-            type="text"
-            placeholder="Descrição"
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
-            required
-          />
-          <input
-            type="number"
-            placeholder="Valor"
-            min="0.01"
-            step="0.01"
-            value={valor}
-            onChange={(e) => setValor(e.target.value)}
-            required
-          />
-          <select value={tipo} onChange={(e) => setTipo(e.target.value as TipoTransacao)}>
-            <option value="Despesa">Despesa</option>
-            <option value="Receita">Receita</option>
-          </select>
-          <select value={pessoaId} onChange={(e) => setPessoaId(e.target.value)} required>
-            <option value="">Selecione a pessoa</option>
-            {pessoas.map((pessoa) => (
-              <option key={pessoa.id} value={pessoa.id}>
-                {pessoa.nome}
-              </option>
-            ))}
-          </select>
-          <button type="submit">Adicionar</button>
-        </form>
-      )}
+      <div className="card">
+        <p className="card__label">Novo lançamento</p>
+        {pessoas.length === 0 ? (
+          <p className="empty">Cadastre uma pessoa antes de lançar transações.</p>
+        ) : (
+          <form onSubmit={criarTransacao} className="form">
+            <input
+              type="text"
+              placeholder="Descrição"
+              aria-label="Descrição"
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              required
+            />
+            <input
+              type="number"
+              className="num"
+              placeholder="Valor"
+              aria-label="Valor"
+              min="0.01"
+              step="0.01"
+              value={valor}
+              onChange={(e) => setValor(e.target.value)}
+              required
+            />
+            <select
+              aria-label="Tipo"
+              value={tipo}
+              onChange={(e) => setTipo(e.target.value as TipoTransacao)}
+            >
+              <option value="Despesa">Despesa</option>
+              <option value="Receita">Receita</option>
+            </select>
+            <select
+              aria-label="Pessoa"
+              value={pessoaId}
+              onChange={(e) => setPessoaId(e.target.value)}
+              required
+            >
+              <option value="">Selecione a pessoa</option>
+              {pessoas.map((pessoa) => (
+                <option key={pessoa.id} value={pessoa.id}>
+                  {pessoa.nome}
+                </option>
+              ))}
+            </select>
+            <button type="submit" className="btn btn--primary">
+              Adicionar
+            </button>
+          </form>
+        )}
+      </div>
 
-      {erro && <p className="erro">{erro}</p>}
+      {erro && <p className="alert alert--error">{erro}</p>}
 
-      {carregando ? (
-        <p>Carregando...</p>
-      ) : transacoes.length === 0 ? (
-        <p>Nenhuma transação cadastrada.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Descrição</th>
-              <th>Pessoa</th>
-              <th>Tipo</th>
-              <th>Valor</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transacoes.map((transacao) => (
-              <tr key={transacao.id}>
-                <td>{transacao.descricao}</td>
-                <td>{nomeDaPessoa(transacao.pessoaId)}</td>
-                <td>{transacao.tipo}</td>
-                <td>{formatarMoeda(transacao.valor)}</td>
+      <div className="card">
+        {carregando ? (
+          <p className="empty">Carregando...</p>
+        ) : transacoes.length === 0 ? (
+          <p className="empty">Nenhuma transação cadastrada ainda.</p>
+        ) : (
+          <div className="table-wrap">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Descrição</th>
+                <th>Pessoa</th>
+                <th>Tipo</th>
+                <th className="right">Valor</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {transacoes.map((transacao) => (
+                <tr key={transacao.id}>
+                  <td>{transacao.descricao}</td>
+                  <td>{nomeDaPessoa(transacao.pessoaId)}</td>
+                  <td>
+                    <span
+                      className={
+                        transacao.tipo === 'Receita'
+                          ? 'badge badge--receita'
+                          : 'badge badge--despesa'
+                      }
+                    >
+                      {transacao.tipo}
+                    </span>
+                  </td>
+                  <td className="right num">{formatarMoeda(transacao.valor)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          </div>
+        )}
+      </div>
     </section>
   )
 }

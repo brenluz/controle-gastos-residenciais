@@ -30,52 +30,63 @@ export function TotaisPage() {
 
   /** Classe para colorir o saldo conforme positivo/negativo. */
   function classeSaldo(valor: number): string {
-    return valor < 0 ? 'saldo-negativo' : 'saldo-positivo'
+    return valor < 0 ? 'neg' : 'pos'
   }
 
   return (
-    <section>
-      <h2>Totais</h2>
+    <section className="page">
+      <div className="page__head">
+        <h2 className="page__title">Totais</h2>
+        <p className="page__sub">
+          Receitas, despesas e saldo de cada pessoa — e o resultado geral da casa.
+        </p>
+      </div>
 
-      {erro && <p className="erro">{erro}</p>}
+      {erro && <p className="alert alert--error">{erro}</p>}
 
-      {carregando ? (
-        <p>Carregando...</p>
-      ) : !totais || totais.pessoas.length === 0 ? (
-        <p>Nenhuma pessoa cadastrada.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Pessoa</th>
-              <th>Receitas</th>
-              <th>Despesas</th>
-              <th>Saldo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {totais.pessoas.map((pessoa) => (
-              <tr key={pessoa.pessoaId}>
-                <td>{pessoa.nome}</td>
-                <td>{formatarMoeda(pessoa.totalReceitas)}</td>
-                <td>{formatarMoeda(pessoa.totalDespesas)}</td>
-                <td className={classeSaldo(pessoa.saldo)}>{formatarMoeda(pessoa.saldo)}</td>
+      <div className="card">
+        {carregando ? (
+          <p className="empty">Carregando...</p>
+        ) : !totais || totais.pessoas.length === 0 ? (
+          <p className="empty">Nenhuma pessoa cadastrada ainda.</p>
+        ) : (
+          <div className="table-wrap">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Pessoa</th>
+                <th className="right">Receitas</th>
+                <th className="right">Despesas</th>
+                <th className="right">Saldo</th>
               </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            {/* Total geral de todas as pessoas (receitas, despesas e saldo líquido). */}
-            <tr className="linha-total">
-              <td>Total geral</td>
-              <td>{formatarMoeda(totais.totalReceitas)}</td>
-              <td>{formatarMoeda(totais.totalDespesas)}</td>
-              <td className={classeSaldo(totais.saldoLiquido)}>
-                {formatarMoeda(totais.saldoLiquido)}
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {totais.pessoas.map((pessoa) => (
+                <tr key={pessoa.pessoaId}>
+                  <td>{pessoa.nome}</td>
+                  <td className="right num">{formatarMoeda(pessoa.totalReceitas)}</td>
+                  <td className="right num">{formatarMoeda(pessoa.totalDespesas)}</td>
+                  <td className={`right num ${classeSaldo(pessoa.saldo)}`}>
+                    {formatarMoeda(pessoa.saldo)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              {/* Total geral de todas as pessoas (receitas, despesas e saldo líquido). */}
+              <tr>
+                <td className="rotulo-total">Total geral</td>
+                <td className="right num">{formatarMoeda(totais.totalReceitas)}</td>
+                <td className="right num">{formatarMoeda(totais.totalDespesas)}</td>
+                <td className={`right num ${classeSaldo(totais.saldoLiquido)}`}>
+                  {formatarMoeda(totais.saldoLiquido)}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+          </div>
+        )}
+      </div>
     </section>
   )
 }
