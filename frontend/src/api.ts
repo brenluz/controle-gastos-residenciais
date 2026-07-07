@@ -14,8 +14,8 @@ const BASE_URL = '/api'
 /**
  * Wrapper em torno do fetch que:
  *  - envia/recebe JSON;
- *  - em caso de erro, extrai a mensagem de negócio retornada pela API
- *    (ex.: "Pessoas menores de 18 anos só podem cadastrar despesas.").
+ *  - em caso de erro, extrai a mensagem retornada pela API no formato
+ *    ProblemDetails (ex.: "Pessoas menores de 18 anos só podem cadastrar despesas.").
  */
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${BASE_URL}${path}`, {
@@ -35,16 +35,22 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return response.json() as Promise<T>
 }
 
-/** Tenta obter uma mensagem legível a partir da resposta de erro da API. */
+/**
+ * Tenta obter uma mensagem legível a partir da resposta de erro da API.
+ * A API padroniza erros em ProblemDetails (RFC 7807): validação vem em
+ * `errors` (por campo) e regras de negócio / not found / 500 em `detail`.
+ */
 async function extrairMensagemDeErro(response: Response): Promise<string> {
   try {
     const corpo = await response.json()
-    // A API usa { mensagem } para erros de negócio e { errors } para validação.
-    if (typeof corpo?.mensagem === 'string') return corpo.mensagem
+    // Erros de validação: { errors: { campo: ["mensagem", ...] } }.
     if (corpo?.errors) {
       const mensagens = Object.values(corpo.errors).flat() as string[]
       if (mensagens.length > 0) return mensagens.join(' ')
     }
+    // Erros de negócio / not found / inesperados: { detail } (ou title).
+    if (typeof corpo?.detail === 'string') return corpo.detail
+    if (typeof corpo?.title === 'string') return corpo.title
   } catch {
     // Corpo não é JSON; usa a mensagem padrão abaixo.
   }
