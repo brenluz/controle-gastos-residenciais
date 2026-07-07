@@ -18,17 +18,35 @@ public class TransacaoService : ITransacaoService
     public async Task<IReadOnlyList<TransacaoResponse>> ListarAsync() =>
         await _db.Transacoes
             .AsNoTracking()
-            .Select(t => TransacaoResponse.FromEntity(t))
+            // Ordem determinística (não há data de lançamento no modelo): por pessoa
+            // e, dentro dela, por descrição. A projeção já traz o nome da pessoa.
+            .OrderBy(t => t.Pessoa!.Nome)
+            .ThenBy(t => t.Descricao)
+            .Select(ProjecaoResposta)
             .ToListAsync();
 
-    public async Task<TransacaoResponse?> ObterPorIdAsync(Guid id)
-    {
-        var transacao = await _db.Transacoes
+    public async Task<TransacaoResponse?> ObterPorIdAsync(Guid id) =>
+        await _db.Transacoes
             .AsNoTracking()
-            .FirstOrDefaultAsync(t => t.Id == id);
+            .Where(t => t.Id == id)
+            .Select(ProjecaoResposta)
+            .FirstOrDefaultAsync();
 
-        return transacao is null ? null : TransacaoResponse.FromEntity(transacao);
-    }
+    /// <summary>
+    /// Projeção da transação para o DTO de resposta. Como acessa a navegação
+    /// <c>Pessoa</c>, é traduzida pelo EF Core para um JOIN no SQL (o nome da
+    /// pessoa vem na mesma consulta, sem carregar a entidade inteira).
+    /// </summary>
+    private static readonly System.Linq.Expressions.Expression<Func<Transacao, TransacaoResponse>> ProjecaoResposta =
+        t => new TransacaoResponse
+        {
+            Id = t.Id,
+            Descricao = t.Descricao,
+            Valor = t.Valor,
+            Tipo = t.Tipo,
+            PessoaId = t.PessoaId,
+            PessoaNome = t.Pessoa!.Nome
+        };
 
     public async Task<OperationResult<TransacaoResponse>> CriarAsync(CriarTransacaoRequest request)
     {
@@ -61,6 +79,10 @@ public class TransacaoService : ITransacaoService
         await _db.SaveChangesAsync();
         await transacaoBd.CommitAsync();
 
-        return OperationResult<TransacaoResponse>.Ok(TransacaoResponse.FromEntity(transacao));
+        // A navegação Pessoa não foi carregada (entidade montada à mão), então
+        // preenchemos o nome a partir da pessoa já consultada acima.
+        var resposta = TransacaoResponse.FromEntity(transacao);
+        resposta.PessoaNome = pessoa.Nome;
+        return OperationResult<TransacaoResponse>.Ok(resposta);
     }
 }
