@@ -30,7 +30,7 @@ public class PessoasController : ControllerBase
     {
         var pessoa = await _pessoas.ObterPorIdAsync(id);
         if (pessoa is null)
-            return NotFound(new { mensagem = "Pessoa não encontrada." });
+            return PessoaNaoEncontrada();
 
         return Ok(pessoa);
     }
@@ -54,8 +54,17 @@ public class PessoasController : ControllerBase
     {
         var removida = await _pessoas.ExcluirAsync(id);
         if (!removida)
-            return NotFound(new { mensagem = "Pessoa não encontrada." });
+            return PessoaNaoEncontrada();
 
         return NoContent();
     }
+
+    /// <summary>404 padronizado (ProblemDetails) para pessoa inexistente.</summary>
+    private NotFoundObjectResult PessoaNaoEncontrada() =>
+        NotFound(new ProblemDetails
+        {
+            Status = StatusCodes.Status404NotFound,
+            Title = "Recurso não encontrado.",
+            Detail = "Pessoa não encontrada."
+        });
 }

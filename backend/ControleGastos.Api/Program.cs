@@ -3,6 +3,7 @@
 // controllers/serviços e o acesso a dados no DbContext (EF Core + SQLite).
 using System.Text.Json.Serialization;
 using ControleGastos.Api.Data;
+using ControleGastos.Api.Infrastructure;
 using ControleGastos.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,11 +41,19 @@ builder.Services.AddScoped<IPessoaService, PessoaService>();
 builder.Services.AddScoped<ITransacaoService, TransacaoService>();
 builder.Services.AddScoped<ITotaisService, TotaisService>();
 
+// Erros padronizados em ProblemDetails (RFC 7807). O handler global captura
+// exceções não tratadas e devolve um 500 no mesmo formato, sem vazar stack trace.
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 // Swagger/OpenAPI para documentar e testar a API durante o desenvolvimento.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Trata exceções não tratadas no topo do pipeline, convertendo-as em ProblemDetails.
+app.UseExceptionHandler();
 
 // Aplica as migrations pendentes na inicialização, criando/atualizando o banco
 // automaticamente. Simplifica a execução do teste técnico (sem passos manuais).

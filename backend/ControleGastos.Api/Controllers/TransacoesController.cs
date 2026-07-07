@@ -28,7 +28,12 @@ public class TransacoesController : ControllerBase
     {
         var transacao = await _transacoes.ObterPorIdAsync(id);
         if (transacao is null)
-            return NotFound(new { mensagem = "Transação não encontrada." });
+            return NotFound(new ProblemDetails
+            {
+                Status = StatusCodes.Status404NotFound,
+                Title = "Recurso não encontrado.",
+                Detail = "Transação não encontrada."
+            });
 
         return Ok(transacao);
     }
@@ -45,7 +50,12 @@ public class TransacoesController : ControllerBase
     {
         var resultado = await _transacoes.CriarAsync(request);
         if (!resultado.Sucesso)
-            return BadRequest(new { mensagem = resultado.Erro });
+            return BadRequest(new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Requisição inválida.",
+                Detail = resultado.Erro
+            });
 
         return CreatedAtAction(nameof(ObterPorId), new { id = resultado.Valor!.Id }, resultado.Valor);
     }
