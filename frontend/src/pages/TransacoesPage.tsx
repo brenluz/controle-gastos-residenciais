@@ -63,11 +63,6 @@ export function TransacoesPage() {
     }
   }
 
-  /** Nome da pessoa dona da transação, para exibição na tabela. */
-  function nomeDaPessoa(id: string): string {
-    return pessoas.find((p) => p.id === id)?.nome ?? '—'
-  }
-
   return (
     <section className={ui.page}>
       <div>
@@ -156,7 +151,7 @@ export function TransacoesPage() {
                 {transacoes.map((transacao) => (
                   <tr key={transacao.id} className={ui.tr}>
                     <td className={ui.td}>{transacao.descricao}</td>
-                    <td className={ui.td}>{nomeDaPessoa(transacao.pessoaId)}</td>
+                    <td className={ui.td}>{transacao.pessoaNome}</td>
                     <td className={ui.td}>
                       <span
                         className={`${ui.badge} ${

@@ -23,6 +23,8 @@ export interface Transacao {
   valor: number
   tipo: TipoTransacao
   pessoaId: string
+  /** Nome da pessoa dona da transação, já resolvido pela API. */
+  pessoaNome: string
 }
 
 /** Dados para cadastrar uma nova transação. */
