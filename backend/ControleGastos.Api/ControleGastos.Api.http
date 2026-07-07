@@ -1,6 +1,46 @@
 @ControleGastos.Api_HostAddress = http://localhost:5285
 
-GET {{ControleGastos.Api_HostAddress}}/weatherforecast/
+### Lista as pessoas
+GET {{ControleGastos.Api_HostAddress}}/api/pessoas
+Accept: application/json
+
+### Cria uma pessoa
+POST {{ControleGastos.Api_HostAddress}}/api/pessoas
+Content-Type: application/json
+
+{
+  "nome": "Maria",
+  "idade": 30
+}
+
+### Obtém uma pessoa pelo id
+GET {{ControleGastos.Api_HostAddress}}/api/pessoas/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+### Exclui uma pessoa (e suas transações)
+DELETE {{ControleGastos.Api_HostAddress}}/api/pessoas/00000000-0000-0000-0000-000000000000
+
+### Lista as transações
+GET {{ControleGastos.Api_HostAddress}}/api/transacoes
+Accept: application/json
+
+### Cria uma transação
+POST {{ControleGastos.Api_HostAddress}}/api/transacoes
+Content-Type: application/json
+
+{
+  "descricao": "Salário",
+  "valor": 5000.00,
+  "tipo": "Receita",
+  "pessoaId": "00000000-0000-0000-0000-000000000000"
+}
+
+### Obtém uma transação pelo id
+GET {{ControleGastos.Api_HostAddress}}/api/transacoes/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+### Totais por pessoa e total geral
+GET {{ControleGastos.Api_HostAddress}}/api/totais
 Accept: application/json
 
 ###

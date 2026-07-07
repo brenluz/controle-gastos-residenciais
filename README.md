@@ -105,11 +105,13 @@ de idade, pessoa inexistente) e o cálculo dos totais. Rodam contra um banco SQL
 
 ## Endpoints da API
 
-| Método   | Rota                  | Descrição                                  |
-| -------- | --------------------- | ------------------------------------------ |
-| `GET`    | `/api/pessoas`        | Lista as pessoas                           |
-| `POST`   | `/api/pessoas`        | Cria uma pessoa                            |
-| `DELETE` | `/api/pessoas/{id}`   | Exclui uma pessoa (e suas transações)      |
-| `GET`    | `/api/transacoes`     | Lista as transações                        |
-| `POST`   | `/api/transacoes`     | Cria uma transação (aplica as regras)      |
-| `GET`    | `/api/totais`         | Totais por pessoa e total geral            |
+| Método   | Rota                    | Descrição                                  |
+| -------- | ----------------------- | ------------------------------------------ |
+| `GET`    | `/api/pessoas`          | Lista as pessoas                           |
+| `GET`    | `/api/pessoas/{id}`     | Obtém uma pessoa pelo id                   |
+| `POST`   | `/api/pessoas`          | Cria uma pessoa                            |
+| `DELETE` | `/api/pessoas/{id}`     | Exclui uma pessoa (e suas transações)      |
+| `GET`    | `/api/transacoes`       | Lista as transações                        |
+| `GET`    | `/api/transacoes/{id}`  | Obtém uma transação pelo id                |
+| `POST`   | `/api/transacoes`       | Cria uma transação (aplica as regras)      |
+| `GET`    | `/api/totais`           | Totais por pessoa e total geral            |

@@ -24,14 +24,25 @@ public class PessoasController : ControllerBase
     public async Task<ActionResult<IEnumerable<PessoaResponse>>> Listar() =>
         Ok(await _pessoas.ListarAsync());
 
+    /// <summary>Obtém uma pessoa pelo identificador.</summary>
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<PessoaResponse>> ObterPorId(Guid id)
+    {
+        var pessoa = await _pessoas.ObterPorIdAsync(id);
+        if (pessoa is null)
+            return NotFound(new { mensagem = "Pessoa não encontrada." });
+
+        return Ok(pessoa);
+    }
+
     /// <summary>Cadastra uma nova pessoa. O identificador é gerado automaticamente.</summary>
     [HttpPost]
     public async Task<ActionResult<PessoaResponse>> Criar(CriarPessoaRequest request)
     {
         var pessoa = await _pessoas.CriarAsync(request);
 
-        // 201 Created com o cabeçalho Location apontando para a listagem.
-        return CreatedAtAction(nameof(Listar), new { id = pessoa.Id }, pessoa);
+        // 201 Created com o cabeçalho Location apontando para o GET do recurso criado.
+        return CreatedAtAction(nameof(ObterPorId), new { id = pessoa.Id }, pessoa);
     }
 
     /// <summary>

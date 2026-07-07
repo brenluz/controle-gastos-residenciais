@@ -22,6 +22,17 @@ public class TransacoesController : ControllerBase
     public async Task<ActionResult<IEnumerable<TransacaoResponse>>> Listar() =>
         Ok(await _transacoes.ListarAsync());
 
+    /// <summary>Obtém uma transação pelo identificador.</summary>
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<TransacaoResponse>> ObterPorId(Guid id)
+    {
+        var transacao = await _transacoes.ObterPorIdAsync(id);
+        if (transacao is null)
+            return NotFound(new { mensagem = "Transação não encontrada." });
+
+        return Ok(transacao);
+    }
+
     /// <summary>
     /// Cadastra uma nova transação, aplicando as regras de negócio:
     /// <list type="bullet">
@@ -36,6 +47,6 @@ public class TransacoesController : ControllerBase
         if (!resultado.Sucesso)
             return BadRequest(new { mensagem = resultado.Erro });
 
-        return CreatedAtAction(nameof(Listar), new { id = resultado.Valor!.Id }, resultado.Valor);
+        return CreatedAtAction(nameof(ObterPorId), new { id = resultado.Valor!.Id }, resultado.Valor);
     }
 }
