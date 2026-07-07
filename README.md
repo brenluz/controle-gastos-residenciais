@@ -114,7 +114,4 @@ de idade, pessoa inexistente) e o cálculo dos totais. Rodam contra um banco SQL
 | `GET`    | `/api/transacoes`       | Lista as transações                        |
 | `GET`    | `/api/transacoes/{id}`  | Obtém uma transação pelo id                |
 | `POST`   | `/api/transacoes`       | Cria uma transação (aplica as regras)      |
-| `GET`    | `/api/totais`           | Totais por pessoa e total geral            |
 
-Erros seguem o formato **ProblemDetails** (RFC 7807): validação de entrada vem
-em `errors` (por campo) e regras de negócio/recurso inexistente em `detail`.
