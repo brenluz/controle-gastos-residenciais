@@ -8,39 +8,53 @@ import { TotaisPage } from './pages/TotaisPage'
 // então usamos estado local para alternar entre elas.
 type Aba = 'pessoas' | 'transacoes' | 'totais'
 
+const ABAS: { id: Aba; rotulo: string }[] = [
+  { id: 'pessoas', rotulo: 'Pessoas' },
+  { id: 'transacoes', rotulo: 'Transações' },
+  { id: 'totais', rotulo: 'Totais' },
+]
+
 /**
- * Componente raiz: cabeçalho, navegação por abas e a página ativa.
+ * Componente raiz: barra lateral de navegação (retrátil) + página ativa.
  */
 function App() {
   const [aba, setAba] = useState<Aba>('pessoas')
+  const [recolhida, setRecolhida] = useState(false)
 
   return (
-    <div className="container">
-      <header>
-        <h1>Controle de Gastos Residenciais</h1>
-        <nav className="abas">
+    <div className={`app ${recolhida ? 'app--recolhida' : ''}`}>
+      <aside className="sidebar">
+        <div className="sidebar__top">
           <button
-            className={aba === 'pessoas' ? 'aba-ativa' : ''}
-            onClick={() => setAba('pessoas')}
+            className="sidebar__toggle"
+            onClick={() => setRecolhida((v) => !v)}
+            aria-label={recolhida ? 'Expandir menu' : 'Recolher menu'}
+            aria-expanded={!recolhida}
+            title={recolhida ? 'Expandir menu' : 'Recolher menu'}
           >
-            Pessoas
+            <span className="sidebar__toggle-icon" aria-hidden="true" />
           </button>
-          <button
-            className={aba === 'transacoes' ? 'aba-ativa' : ''}
-            onClick={() => setAba('transacoes')}
-          >
-            Transações
-          </button>
-          <button
-            className={aba === 'totais' ? 'aba-ativa' : ''}
-            onClick={() => setAba('totais')}
-          >
-            Totais
-          </button>
-        </nav>
-      </header>
+          <span className="brand">Gastos residenciais</span>
+        </div>
 
-      <main>
+        <nav className="nav">
+          {ABAS.map(({ id, rotulo }) => (
+            <button
+              key={id}
+              className={`nav__item ${aba === id ? 'nav__item--active' : ''}`}
+              onClick={() => setAba(id)}
+              aria-current={aba === id ? 'page' : undefined}
+              aria-label={rotulo}
+              title={rotulo}
+            >
+              <span className="nav__dot" aria-hidden="true" />
+              <span className="nav__label">{rotulo}</span>
+            </button>
+          ))}
+        </nav>
+      </aside>
+
+      <main className="content">
         {aba === 'pessoas' && <PessoasPage />}
         {aba === 'transacoes' && <TransacoesPage />}
         {aba === 'totais' && <TotaisPage />}
