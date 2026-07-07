@@ -88,7 +88,7 @@ export function TransacoesPage() {
               type="text"
               placeholder="Descrição"
               aria-label="Descrição"
-              className={`${ui.field} min-w-0 flex-1`}
+              className={`${ui.field} w-full min-w-0 md:w-auto md:flex-1`}
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
               required

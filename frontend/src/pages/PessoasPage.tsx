@@ -82,7 +82,7 @@ export function PessoasPage() {
             type="text"
             placeholder="Nome"
             aria-label="Nome"
-            className={`${ui.field} min-w-0 flex-1`}
+            className={`${ui.field} w-full min-w-0 md:w-auto md:flex-1`}
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             required
