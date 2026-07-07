@@ -118,20 +118,3 @@ de idade, pessoa inexistente) e o cálculo dos totais. Rodam contra um banco SQL
 
 Erros seguem o formato **ProblemDetails** (RFC 7807): validação de entrada vem
 em `errors` (por campo) e regras de negócio/recurso inexistente em `detail`.
-
----
-
-## Decisões de escopo
-
-Alguns pontos foram mantidos simples de propósito, por não fazerem parte dos
-requisitos do teste:
-
-- **Idade armazenada como número inteiro** (e não data de nascimento). É o que o
-  enunciado pede; a consequência é que a idade não é recalculada com o passar do
-  tempo. Guardar a data de nascimento e derivar a idade seria o próximo passo
-  natural caso a regra precisasse acompanhar o envelhecimento da pessoa.
-- **Sem paginação** nas listagens. O volume esperado é pequeno; para bases
-  grandes, as rotas de listagem ganhariam paginação/filtros.
-- **Proxy do Vite apenas em desenvolvimento.** Em produção, o front-end
-  consumiria a API por uma URL configurável (variável de ambiente) ou seria
-  servido atrás do mesmo host; o CORS já é configurável via `appsettings`.
