@@ -7,6 +7,20 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Política de CORS para permitir que o front-end (React) consuma a API
+// diretamente. As origens permitidas são configuráveis via appsettings
+// ("Cors:AllowedOrigins"), com um padrão para o dev server do Vite.
+const string PoliticaCorsFrontend = "Frontend";
+var origensPermitidas = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? new[] { "http://localhost:5173" };
+
+builder.Services.AddCors(options =>
+    options.AddPolicy(PoliticaCorsFrontend, policy =>
+        policy.WithOrigins(origensPermitidas)
+              .AllowAnyHeader()
+              .AllowAnyMethod()));
+
 // Registra os controllers (MVC/attribute routing) que exporão os endpoints REST.
 // O JsonStringEnumConverter faz o tipo da transação trafegar como texto
 // ("Despesa"/"Receita") em vez de número, deixando a API mais legível.
@@ -41,6 +55,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(PoliticaCorsFrontend);
 app.UseAuthorization();
 app.MapControllers();
 
