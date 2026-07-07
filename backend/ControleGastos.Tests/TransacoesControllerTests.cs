@@ -87,6 +87,44 @@ public class TransacoesControllerTests
     }
 
     [Fact]
+    public async Task Criar_ParaPessoaCom17Anos_Receita_DeveRetornarBadRequest()
+    {
+        // Fronteira da regra (< 18): 17 anos ainda é menor.
+        using var factory = new TestDbContextFactory();
+        var id = await SemearPessoaAsync(factory, idade: 17);
+
+        using var contexto = factory.CriarContexto();
+        var resultado = await new TransacoesController(new TransacaoService(contexto)).Criar(new CriarTransacaoRequest
+        {
+            Descricao = "Mesada",
+            Valor = 100m,
+            Tipo = TipoTransacao.Receita,
+            PessoaId = id
+        });
+
+        Assert.IsType<BadRequestObjectResult>(resultado.Result);
+    }
+
+    [Fact]
+    public async Task Criar_ParaPessoaCom18Anos_Receita_DeveSerCriada()
+    {
+        // Fronteira da regra (< 18): 18 anos já é maior de idade.
+        using var factory = new TestDbContextFactory();
+        var id = await SemearPessoaAsync(factory, idade: 18);
+
+        using var contexto = factory.CriarContexto();
+        var resultado = await new TransacoesController(new TransacaoService(contexto)).Criar(new CriarTransacaoRequest
+        {
+            Descricao = "Salário",
+            Valor = 3000m,
+            Tipo = TipoTransacao.Receita,
+            PessoaId = id
+        });
+
+        Assert.IsType<CreatedAtActionResult>(resultado.Result);
+    }
+
+    [Fact]
     public async Task Criar_PessoaInexistente_DeveRetornarBadRequest()
     {
         using var factory = new TestDbContextFactory();
